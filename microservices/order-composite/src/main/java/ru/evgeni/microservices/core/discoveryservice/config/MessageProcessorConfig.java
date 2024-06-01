@@ -1,6 +1,7 @@
 package ru.evgeni.microservices.core.discoveryservice.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -14,18 +15,18 @@ import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeServi
 import java.util.Optional;
 import java.util.function.Consumer;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class MessageProcessorConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MessageProcessorConfig.class);
     private final OrderCompositeProducerService orderCompositeProducerService;
     private final OrderCompositeService orderCompositeService;
 
     @Bean
     public Consumer<Event<String, CustomerOrder>> handleOrderResult() {
         return event -> {
-            LOG.info("Process message handle result order at {}...", event.getEventCreatedAt());
+            log.info("Process message handle result order at {}...", event.getEventCreatedAt());
             switch (event.getEventType()) {
                 case CREATE: {
                     Optional<SendEntity> sendEntity = orderCompositeService.getSendEntityByCode(event.getData().getCode());
@@ -40,14 +41,14 @@ public class MessageProcessorConfig {
                     return;
                 }
             }
-            LOG.info("Message processing done!");
+            log.info("Message processing done!");
         };
     }
 
     @Bean
     public Consumer<Event<String, CustomerOrder>> handlePaymentResult() {
         return event -> {
-            LOG.info("Process message handle result payment at {}...", event.getEventCreatedAt());
+            log.info("Process message handle result payment at {}...", event.getEventCreatedAt());
             switch (event.getEventType()) {
                 case CREATE: {
                     Optional<SendEntity> sendEntity = orderCompositeService.getSendEntityByCode(event.getData().getCode());
@@ -62,14 +63,14 @@ public class MessageProcessorConfig {
                     return;
                 }
             }
-            LOG.info("Message processing done!");
+            log.info("Message processing done!");
         };
     }
 
     @Bean
     public Consumer<Event<String, CustomerOrder>> handleRestaurantResult() {
         return event -> {
-            LOG.info("Process message handle result restaurant at {}...", event.getEventCreatedAt());
+            log.info("Process message handle result restaurant at {}...", event.getEventCreatedAt());
             switch (event.getEventType()) {
                 case CREATE: {
                     Optional<SendEntity> sendEntity = orderCompositeService.getSendEntityByCode(event.getData().getCode());
@@ -84,7 +85,7 @@ public class MessageProcessorConfig {
                     return;
                 }
             }
-            LOG.info("Message processing done!");
+            log.info("Message processing done!");
         };
     }
 }

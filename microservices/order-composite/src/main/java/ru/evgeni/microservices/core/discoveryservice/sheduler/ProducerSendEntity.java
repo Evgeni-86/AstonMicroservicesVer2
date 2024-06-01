@@ -1,12 +1,13 @@
 package ru.evgeni.microservices.core.discoveryservice.sheduler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,12 @@ import ru.evgeni.microservices.core.discoveryservice.repository.OrderCompositeRe
 
 import java.util.List;
 
+@Slf4j
 @EnableScheduling
 @RequiredArgsConstructor
 @Service
 public class ProducerSendEntity {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProducerSendEntity.class);
     private final OrderCompositeRepository orderCompositeRepository;
     private final StreamBridge streamBridge;
 
@@ -31,28 +32,26 @@ public class ProducerSendEntity {
     @Transactional
     public void send() {
         List<SendEntity> sendEntityList = orderCompositeRepository.findAllEntitiesForSend();
-
         sendEntityList.forEach(message -> {
-            RequestNotificationDto requestNotificationDto =
-                    new RequestNotificationDto(message.getCode(), message.getAddress());
-
-            Event<String, RequestNotificationDto> currentMessage = new Event<>(
-                    Event.Type.CREATE,
-                    requestNotificationDto.getCode(),
-                    requestNotificationDto);
-
-            sendMessage("notification-command-out-0", currentMessage);
+            Message<Event<String, RequestNotificationDto>> messageForSent = mapToMessage(message);
+            log.debug("Sending a {} message to \"notification-command-out-0\"", messageForSent.getPayload().getEventType());
+            streamBridge.send("notification-command-out-0", messageForSent);
             message.setSendStatus(true);
         });
-
         orderCompositeRepository.saveAll(sendEntityList);
     }
 
-    public void sendMessage(String bindingName, Event event) {
-        LOG.debug("Sending a {} message to {}", event.getEventType(), bindingName);
-        Message message = MessageBuilder.withPayload(event)
-                .setHeader("partitionKey", event.getKey())
+    @NotNull
+    private static Message<Event<String, RequestNotificationDto>> mapToMessage(SendEntity message) {
+        RequestNotificationDto requestNotificationDto =
+                new RequestNotificationDto(message.getCode(), message.getAddress());
+        Event<String, RequestNotificationDto> currentMessage = new Event<>(
+                Event.Type.CREATE,
+                requestNotificationDto.getCode(),
+                requestNotificationDto);
+        return MessageBuilder
+                .withPayload(currentMessage)
+                .setHeader("partitionKey", currentMessage.getKey())
                 .build();
-        streamBridge.send(bindingName, message);
     }
 }

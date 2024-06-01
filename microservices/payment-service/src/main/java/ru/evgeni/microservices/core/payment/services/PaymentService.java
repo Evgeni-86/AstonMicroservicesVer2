@@ -1,7 +1,7 @@
 package ru.evgeni.microservices.core.payment.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
@@ -14,23 +14,18 @@ import ru.evgeni.microservices.core.payment.repository.PaymentRepository;
 
 import java.util.Optional;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class PaymentService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PaymentService.class);
-    private PaymentRepository paymentRepository;
+    private final PaymentRepository paymentRepository;
     private final StreamBridge streamBridge;
     private double testBalance = 1000d;
 
-    @Autowired
-    public PaymentService(PaymentRepository paymentRepository, StreamBridge streamBridge) {
-        this.paymentRepository = paymentRepository;
-        this.streamBridge = streamBridge;
-    }
-
     public void save(CustomerOrder customerOrder) {
         if (testBalance > customerOrder.getAmount()) {
-            LOG.info("Create payment with code: {}", customerOrder.getCode());
+            log.info("Create payment with code: {}", customerOrder.getCode());
             PaymentEntity payment = new PaymentEntity();
             payment.setUserId(customerOrder.getUserId());
             payment.setCode(customerOrder.getCode());
@@ -38,7 +33,7 @@ public class PaymentService {
             testBalance -= customerOrder.getAmount();
             paymentRepository.save(payment);
         } else {
-            LOG.debug("Error payment user id {}", customerOrder.getUserId());
+            log.debug("Error payment user id {}", customerOrder.getUserId());
             Event<String, CustomerOrder> paymentReverseEvent = new Event<>(
                     Event.Type.DELETE,
                     customerOrder.getCode(),
@@ -48,7 +43,7 @@ public class PaymentService {
     }
 
     public void reversePayment(CustomerOrder customerOrder) {
-        LOG.debug("Reverse payment user id {}", customerOrder.getUserId());
+        log.debug("Reverse payment user id {}", customerOrder.getUserId());
         try {
             Optional<PaymentEntity> byCode = paymentRepository.findByCode(customerOrder.getCode());
             byCode.ifPresent(payment -> {
@@ -56,12 +51,12 @@ public class PaymentService {
                 paymentRepository.deleteByCode(customerOrder.getCode());
             });
         } catch (Exception ex) {
-            LOG.debug("Error reverse payment user id {}", customerOrder.getUserId());
+            log.debug("Error reverse payment user id {}", customerOrder.getUserId());
         }
     }
 
     private void sendMessage(String bindingName, Event event) {
-        LOG.debug("Sending a {} message to {}", event.getEventType(), bindingName);
+        log.debug("Sending a {} message to {}", event.getEventType(), bindingName);
         Message message = MessageBuilder.withPayload(event)
                 .setHeader("partitionKey", event.getKey())
                 .build();
