@@ -1,0 +1,42 @@
+
+### API GATEWAY TEST CORRECT
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "code":  "DSFD123",
+  "item": "ITEM",
+  "quantity": 5,
+  "amount": 5.5,
+  "paymentMethod": "CARD",
+  "userId": "789",
+  "address": "Address"
+}
+
+### API GATEWAY TEST AMOUNT NOT CORRECT
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "code":  "DSFD123",
+  "item": "ITEM",
+  "quantity": 5,
+  "amount": 5555.5,
+  "paymentMethod": "CARD",
+  "userId": "789",
+  "address": "Address"
+}
+
+### API GATEWAY TEST ITEM NOT CORRECT
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "code":  "DSFD123",
+  "item": "SomeItem",
+  "quantity": 5,
+  "amount": 5.5,
+  "paymentMethod": "CARD",
+  "userId": "789",
+  "address": "Address"
+}

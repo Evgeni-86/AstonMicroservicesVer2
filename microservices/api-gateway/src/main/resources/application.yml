@@ -1,0 +1,25 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+      routes:
+        - id: order-composite
+          uri: lb://order-composite
+          predicates:
+            - Path=/api/v1/orders
+
+---
+spring.config.activate.on-profile: dev
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka

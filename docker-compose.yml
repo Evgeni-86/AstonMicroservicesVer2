@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+
+  config-service:
+    image: aston/config-service:1.0-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8071/actuator/health || exit 1" ]
+      interval: 7s
+      timeout: 7s
+      retries: 3
+    depends_on:
+      - mongodb
+      - kafka
+
+  discovery-service:
+    image: aston/discovery-service:1.0-SNAPSHOT
+    depends_on:
+      config-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1" ]
+      interval: 7s
+      timeout: 7s
+      retries: 3
+
+  api-gateway:
+    image: aston/api-gateway:1.0-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+
+  order-composite:
+    image: aston/order-composite:1.0-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+
+  order-service:
+    image: aston/order-service:1.0-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+
+  payment-service:
+    image: aston/payment-service:1.0-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+
+  restaurant-service:
+    image: aston/restaurant-service:1.0-SNAPSHOT
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      discovery-service:
+        condition: service_healthy
+
+
+  mongodb:
+    image: mongo:6.0.4
+    command: mongod
+    healthcheck:
+      test: "mongostat -n 1"
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    restart: always
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_INTERNAL://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    restart: always
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181

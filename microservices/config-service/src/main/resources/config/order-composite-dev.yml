@@ -1,0 +1,82 @@
+server.port: 0
+
+server.error.include-message: always
+
+spring:
+  application:
+    name: order-composite
+  cloud:
+    function:
+      definition: handlePaymentResult;handleRestaurantResult
+    stream:
+      defaultBinder: kafka
+      bindings:
+        #OUTPUT MESSAGE CONFIG
+        payment-command-out-0:
+          destination: payment-command
+          content-type: application/json
+        restaurant-command-out-0:
+          destination: restaurant-command
+          content-type: application/json
+        order-command-out-0:
+          destination: order-command
+          content-type: application/json
+        #INPUT MESSAGE CONFIG
+        handlePaymentResult-in-0:
+          destination: payment-result
+          group: paymentGroup
+          content-type: application/json
+          consumer:
+            maxAttempts: 3
+            backOffInitialInterval: 500
+            backOffMaxInterval: 1000
+            backOffMultiplier: 2.0
+        handleRestaurantResult-in-0:
+          destination: restaurant-result
+          group: restaurantGroup
+          content-type: application/json
+          consumer:
+            maxAttempts: 3
+            backOffInitialInterval: 500
+            backOffMaxInterval: 1000
+            backOffMultiplier: 2.0
+        handleOrderResult-in-0:
+          destination: order-result
+          group: orderGroup
+          content-type: application/json
+          consumer:
+            maxAttempts: 3
+            backOffInitialInterval: 500
+            backOffMaxInterval: 1000
+            backOffMultiplier: 2.0
+      kafka:
+        bindings:
+          handlePaymentResult-in-0:
+            consumer:
+              enableDlq: true
+          handleRestaurantResult-in-0:
+            consumer:
+              enableDlq: true
+          handleOrderResult-in-0:
+            consumer:
+              enableDlq: true
+
+spring.cloud.stream.kafka.binder:
+  brokers: kafka:9092
+  replication-factor: 1
+
+logging:
+  level:
+    root: INFO
+    ru.evgeni: DEBUG
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+
+management.endpoint.health.show-details: "ALWAYS"
+management.endpoints.web.exposure.include: "*"
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    serviceUrl:
+      defaultZone: http://discovery-service:8761/eureka
