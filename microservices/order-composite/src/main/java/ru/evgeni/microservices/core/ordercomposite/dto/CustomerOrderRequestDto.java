@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.dto;
+package ru.evgeni.microservices.core.ordercomposite.dto;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.model;
+package ru.evgeni.microservices.core.ordercomposite.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

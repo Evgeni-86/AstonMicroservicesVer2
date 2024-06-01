@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.event;
+package ru.evgeni.microservices.core.ordercomposite.event;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;

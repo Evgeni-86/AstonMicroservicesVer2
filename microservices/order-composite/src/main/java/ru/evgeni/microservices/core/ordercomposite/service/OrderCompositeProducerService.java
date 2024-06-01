@@ -1,17 +1,13 @@
-package ru.evgeni.microservices.core.discoveryservice.service;
+package ru.evgeni.microservices.core.ordercomposite.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import ru.evgeni.microservices.core.discoveryservice.event.Event;
-import ru.evgeni.microservices.core.discoveryservice.model.CustomerOrder;
-
-import java.util.UUID;
+import ru.evgeni.microservices.core.ordercomposite.event.Event;
+import ru.evgeni.microservices.core.ordercomposite.model.CustomerOrder;
 
 @Slf4j
 @RequiredArgsConstructor

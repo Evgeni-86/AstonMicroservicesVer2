@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice;
+package ru.evgeni.microservices.core.ordercomposite;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

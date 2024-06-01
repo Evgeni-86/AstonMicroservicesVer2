@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.entity;
+package ru.evgeni.microservices.core.ordercomposite.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -13,8 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "send_entity")
-public class SendEntity {
+@Table(name = "delivery_messages")
+public class MessageDeliveryEntity {
     @Id
     private String code;
     private String address;

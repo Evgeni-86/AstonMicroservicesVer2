@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.exception;
+package ru.evgeni.microservices.core.ordercomposite.exception;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException() {

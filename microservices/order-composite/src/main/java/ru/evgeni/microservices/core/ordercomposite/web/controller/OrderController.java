@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.web.controller;
+package ru.evgeni.microservices.core.ordercomposite.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.evgeni.microservices.core.discoveryservice.dto.CustomerOrderRequestDto;
-import ru.evgeni.microservices.core.discoveryservice.model.CustomerOrder;
-import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeProducerService;
-import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeService;
+import ru.evgeni.microservices.core.ordercomposite.dto.CustomerOrderRequestDto;
+import ru.evgeni.microservices.core.ordercomposite.model.CustomerOrder;
+import ru.evgeni.microservices.core.ordercomposite.service.OrderCompositeProducerService;
+import ru.evgeni.microservices.core.ordercomposite.service.OrderCompositeService;
 
 import java.util.UUID;
 

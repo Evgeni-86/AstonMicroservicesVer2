@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.exception;
+package ru.evgeni.microservices.core.ordercomposite.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

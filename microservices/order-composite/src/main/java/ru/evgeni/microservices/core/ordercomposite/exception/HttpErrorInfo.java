@@ -1,4 +1,4 @@
-package ru.evgeni.microservices.core.discoveryservice.exception;
+package ru.evgeni.microservices.core.ordercomposite.exception;
 
 import lombok.Getter;
 import lombok.Setter;
