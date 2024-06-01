@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.evgeni.microservices.core.discoveryservice.dto.CustomerOrderRequestDto;
 import ru.evgeni.microservices.core.discoveryservice.model.CustomerOrder;
 import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeProducerService;
-import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeSendService;
+import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeService;
 
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public class OrderController {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
     private final OrderCompositeProducerService orderCompositeProducerService;
-    private final OrderCompositeSendService orderCompositeSendService;
+    private final OrderCompositeService orderCompositeService;
 
     @PostMapping("/orders")
     public ResponseEntity<String> createOrder(@RequestBody CustomerOrderRequestDto customerOrderRequestDto) {
@@ -38,7 +38,7 @@ public class OrderController {
                 customerOrderRequestDto.getUserId(),
                 customerOrderRequestDto.getAddress());
 
-        orderCompositeSendService.saveOrder(customerOrder);
+        orderCompositeService.saveOrder(customerOrder);
         orderCompositeProducerService.save(customerOrder);
         return ResponseEntity.ok().body("Заказ принят");
     }

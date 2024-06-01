@@ -10,16 +10,18 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class OrderCompositeSendService {
+public class OrderCompositeService {
 
     private final OrderCompositeRepository orderCompositeRepository;
 
     public void saveOrder(CustomerOrder customerOrder) {
         SendEntity sendEntity = new SendEntity();
         sendEntity.setCode(customerOrder.getCode());
+        sendEntity.setAddress(customerOrder.getAddress());
         sendEntity.setOrderStatus(false);
         sendEntity.setPaymentStatus(false);
         sendEntity.setRestaurantStatus(false);
+        sendEntity.setSendStatus(false);
         orderCompositeRepository.save(sendEntity);
     }
 

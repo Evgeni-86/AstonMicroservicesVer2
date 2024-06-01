@@ -9,7 +9,7 @@ import ru.evgeni.microservices.core.discoveryservice.entity.SendEntity;
 import ru.evgeni.microservices.core.discoveryservice.event.Event;
 import ru.evgeni.microservices.core.discoveryservice.model.CustomerOrder;
 import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeProducerService;
-import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeSendService;
+import ru.evgeni.microservices.core.discoveryservice.service.OrderCompositeService;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -20,7 +20,7 @@ public class MessageProcessorConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageProcessorConfig.class);
     private final OrderCompositeProducerService orderCompositeProducerService;
-    private final OrderCompositeSendService orderCompositeSendService;
+    private final OrderCompositeService orderCompositeService;
 
     @Bean
     public Consumer<Event<String, CustomerOrder>> handleOrderResult() {
@@ -28,10 +28,10 @@ public class MessageProcessorConfig {
             LOG.info("Process message handle result order at {}...", event.getEventCreatedAt());
             switch (event.getEventType()) {
                 case CREATE: {
-                    Optional<SendEntity> sendEntity = orderCompositeSendService.getSendEntityByCode(event.getData().getCode());
+                    Optional<SendEntity> sendEntity = orderCompositeService.getSendEntityByCode(event.getData().getCode());
                     sendEntity.ifPresent(element -> {
                         element.setOrderStatus(true);
-                        orderCompositeSendService.saveEntity(element);
+                        orderCompositeService.saveEntity(element);
                     });
                     return;
                 }
@@ -50,10 +50,10 @@ public class MessageProcessorConfig {
             LOG.info("Process message handle result payment at {}...", event.getEventCreatedAt());
             switch (event.getEventType()) {
                 case CREATE: {
-                    Optional<SendEntity> sendEntity = orderCompositeSendService.getSendEntityByCode(event.getData().getCode());
+                    Optional<SendEntity> sendEntity = orderCompositeService.getSendEntityByCode(event.getData().getCode());
                     sendEntity.ifPresent(element -> {
                         element.setPaymentStatus(true);
-                        orderCompositeSendService.saveEntity(element);
+                        orderCompositeService.saveEntity(element);
                     });
                     return;
                 }
@@ -72,10 +72,10 @@ public class MessageProcessorConfig {
             LOG.info("Process message handle result restaurant at {}...", event.getEventCreatedAt());
             switch (event.getEventType()) {
                 case CREATE: {
-                    Optional<SendEntity> sendEntity = orderCompositeSendService.getSendEntityByCode(event.getData().getCode());
+                    Optional<SendEntity> sendEntity = orderCompositeService.getSendEntityByCode(event.getData().getCode());
                     sendEntity.ifPresent(element -> {
                         element.setRestaurantStatus(true);
-                        orderCompositeSendService.saveEntity(element);
+                        orderCompositeService.saveEntity(element);
                     });
                     return;
                 }
