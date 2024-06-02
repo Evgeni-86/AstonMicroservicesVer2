@@ -20,8 +20,8 @@ public class OrderService {
     private final StreamBridge streamBridge;
 
     public void save(CustomerOrder customerOrder) {
-        log.info("Create order with code: {}", customerOrder.getCode());
         try {
+            log.info("Create order with code: {}", customerOrder.getCode());
             OrderEntity orderEntity = new OrderEntity();
             orderEntity.setCode(customerOrder.getCode());
             orderEntity.setItem(customerOrder.getItem());
@@ -31,6 +31,11 @@ public class OrderService {
             orderEntity.setUserId(customerOrder.getUserId());
             orderEntity.setAddress(customerOrder.getAddress());
             orderRepository.save(orderEntity);
+            Event<String, CustomerOrder> orderReverseEvent = new Event<>(
+                    Event.Type.CREATE,
+                    customerOrder.getCode(),
+                    customerOrder);
+            sendMessage("order-result-out-0", orderReverseEvent);
         } catch (Exception exception) {
             log.debug("Error new order code {}", customerOrder.getCode());
             Event<String, CustomerOrder> orderReverseEvent = new Event<>(

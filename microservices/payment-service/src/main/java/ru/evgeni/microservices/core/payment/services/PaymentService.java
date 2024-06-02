@@ -32,6 +32,11 @@ public class PaymentService {
             payment.setSum(customerOrder.getAmount());
             testBalance -= customerOrder.getAmount();
             paymentRepository.save(payment);
+            Event<String, CustomerOrder> paymentReverseEvent = new Event<>(
+                    Event.Type.CREATE,
+                    customerOrder.getCode(),
+                    customerOrder);
+            sendMessage("payment-result-out-0", paymentReverseEvent);
         } else {
             log.debug("Error payment user id {}", customerOrder.getUserId());
             Event<String, CustomerOrder> paymentReverseEvent = new Event<>(

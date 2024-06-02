@@ -29,6 +29,11 @@ public class RestaurantService {
             orderEntity.setCode(customerOrder.getCode());
             orderEntity.setStatus("Create");
             restaurantRepository.save(orderEntity);
+            Event<String, CustomerOrder> restaurantReverseEvent = new Event<>(
+                    Event.Type.CREATE,
+                    customerOrder.getCode(),
+                    customerOrder);
+            sendMessage("restaurant-result-out-0", restaurantReverseEvent);
         } else {
             log.debug("Error restaurant order user id {}", customerOrder.getUserId());
             Event<String, CustomerOrder> restaurantReverseEvent = new Event<>(
