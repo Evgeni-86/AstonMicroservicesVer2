@@ -34,7 +34,7 @@ public class DeliveryMessageWorker {
             Message<Event<String, RequestDeliveryDto>> messageForSent = mapToMessage(message);
             log.debug("Sending a {} message to \"delivery-command-out-0\"", messageForSent.getPayload().getEventType());
             streamBridge.send("delivery-command-out-0", messageForSent);
-            message.setSendStatus(true);
+            message.setSendStatus("true");
         });
         orderCompositeRepository.saveAll(messageDeliveryEntityList);
     }

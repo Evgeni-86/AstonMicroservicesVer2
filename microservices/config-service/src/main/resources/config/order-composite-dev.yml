@@ -5,9 +5,18 @@ server.error.include-message: always
 spring:
   application:
     name: order-composite
+  datasource:
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://postgres:5432/aston
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
   cloud:
     function:
-      definition: handlePaymentResult;handleRestaurantResult
+      definition: handleOrderResult;handlePaymentResult;handleRestaurantResult
     stream:
       defaultBinder: kafka
       bindings:

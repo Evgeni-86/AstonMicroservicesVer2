@@ -14,6 +14,7 @@ services:
     depends_on:
       - mongodb
       - kafka
+      - postgres
 
   discovery-service:
     image: aston/discovery-service:1.0-SNAPSHOT
@@ -78,9 +79,18 @@ services:
       timeout: 2s
       retries: 60
 
+  postgres:
+    image: postgres:15.3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: aston
+
   kafka:
     image: confluentinc/cp-kafka:7.6.1
     restart: always
+    ports:
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -89,6 +99,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "topic1:1:1,topic2:1:1"
     depends_on:
       - zookeeper
 
@@ -97,3 +108,9 @@ services:
     restart: always
     environment:
       - ZOOKEEPER_CLIENT_PORT=2181
+
+  adminer:
+    image: adminer:4.8.0
+    restart: always
+    ports:
+      - "5555:8080"

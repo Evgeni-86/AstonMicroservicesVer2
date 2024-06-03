@@ -18,8 +18,8 @@ public class MessageDeliveryEntity {
     @Id
     private String code;
     private String address;
-    private Boolean orderStatus;
-    private Boolean paymentStatus;
-    private Boolean restaurantStatus;
-    private boolean sendStatus;
+    private String orderStatus;
+    private String paymentStatus;
+    private String restaurantStatus;
+    private String sendStatus;
 }

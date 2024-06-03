@@ -12,7 +12,7 @@ public interface OrderCompositeRepository extends CrudRepository<MessageDelivery
     @Query(value =
         """
             SELECT * FROM delivery_messages
-            WHERE order_status = true AND payment_status = true AND restaurant_status = true 
+            WHERE order_status = 'true' AND payment_status = 'true' AND restaurant_status = 'true' 
             FOR UPDATE SKIP LOCKED
         """, nativeQuery = true)
     List<MessageDeliveryEntity> findAllEntitiesForSend();

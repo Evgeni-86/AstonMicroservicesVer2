@@ -22,15 +22,10 @@ public class MessageProcessorConfig {
     public Consumer<Event<String, CustomerOrder>> handleCommandMessageProcessor() {
         return event -> {
             log.info("Process message command order at {}...", event.getEventCreatedAt());
-            switch (event.getEventType()) {
-                case CREATE : {
-                    orderService.save(event.getData());
-                    return;
-                }
-                case DELETE : {
-                    orderService.remove(event.getData());
-                    return;
-                }
+            if (event.getEventType() == Event.Type.CREATE) {
+                orderService.save(event.getData());
+            } else if (event.getEventType() == Event.Type.DELETE) {
+                orderService.remove(event.getData());
             }
             log.info("Message processing done!");
         };

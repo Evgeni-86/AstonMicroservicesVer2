@@ -21,15 +21,10 @@ public class MessageProcessorConfig {
     public Consumer<Event<String, CustomerOrder>> handleCommandMessageProcessor() {
         return event -> {
             log.info("Process message restaurant created at {}...", event.getEventCreatedAt());
-            switch (event.getEventType()) {
-                case CREATE : {
-                    restaurantService.save(event.getData());
-                    return;
-                }
-                case DELETE : {
-                    restaurantService.reverseOrder(event.getData());
-                    return;
-                }
+            if (event.getEventType() == Event.Type.CREATE) {
+                restaurantService.save(event.getData());
+            } else if (event.getEventType() == Event.Type.DELETE) {
+                restaurantService.reverseOrder(event.getData());
             }
             log.info("Message processing done!");
         };

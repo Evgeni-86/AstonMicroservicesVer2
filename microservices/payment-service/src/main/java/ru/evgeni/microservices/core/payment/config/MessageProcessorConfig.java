@@ -21,15 +21,10 @@ public class MessageProcessorConfig {
     public Consumer<Event<String, CustomerOrder>> handleCommandMessageProcessor() {
         return event -> {
             log.info("Process message payment created at {}...", event.getEventCreatedAt());
-            switch (event.getEventType()) {
-                case CREATE : {
-                    paymentService.save(event.getData());
-                    return;
-                }
-                case DELETE : {
-                    paymentService.reversePayment(event.getData());
-                    return;
-                }
+            if (event.getEventType() == Event.Type.CREATE) {
+                paymentService.save(event.getData());
+            } else if (event.getEventType() == Event.Type.DELETE) {
+                paymentService.reversePayment(event.getData());
             }
             log.info("Message processing done!");
         };
